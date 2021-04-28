@@ -23,8 +23,8 @@ int counter = 0;
 
 
 void setup() {
-  size(800, 600, P3D);
-  //fullScreen(P3D);
+  //size(800, 600, P3D);
+  fullScreen(P3D);
 
   printArray(Serial.list());
   String portName = Serial.list()[PORT_NUMBER];
@@ -107,7 +107,7 @@ void setup() {
   cp5.addSlider("diffA")
     .setPosition(0, h)
     .setSize(sliderWidth, sliderHeight)
-    .setRange(0.01f, 1.5f)
+    .setRange(0.1f, 1.5f)
     .setValue(1.0f)
     .setGroup(g)
     ;
@@ -116,7 +116,7 @@ void setup() {
   cp5.addSlider("diffB")
     .setPosition(0, h)
     .setSize(sliderWidth, sliderHeight)
-    .setRange(0.01f, 1.8f)
+    .setRange(0.01f, 1.7f)
     .setValue(0.5f)
     .setGroup(g)
     ;
@@ -176,13 +176,18 @@ void draw() {
   }
 
   if (USE_SERIAL) {
-    cp5.getController("feedA").setValue(floor(map(pot1, 0, 1023, cp5.getController("feedA").getMin(), cp5.getController("feedA").getMax())));
-    cp5.getController("feedA").setValue(map(pot2, 0, 1023, cp5.getController("feedA").getMin(), cp5.getController("feedA").getMax()));
-    cp5.getController("killB").setValue(map(pot3, 0, 1023, cp5.getController("killB").getMin(), cp5.getController("killB").getMax()));
-    cp5.getController("diffA").setValue(map(pot4, 0, 1023, cp5.getController("diffA").getMin(), cp5.getController("diffA").getMax()));
-    cp5.getController("diffB").setValue(map(pot5, 0, 1023, cp5.getController("diffB").getMin(), cp5.getController("diffB").getMax()));
-    cp5.getController("smoothA").setValue(map(pot6, 0, 1023, cp5.getController("smoothA").getMin(), cp5.getController("smoothA").getMax()));
-    cp5.getController("smoothB").setValue(map(pot7, 0, 1023, cp5.getController("smoothB").getMin(), cp5.getController("smoothB").getMax()));
+    cp5.getController("size").setValue(map(pot3, 1023, 0, cp5.getController("size").getMin(), cp5.getController("size").getMax()));
+    cp5.getController("feedA").setValue(map(pot1, 1023, 0, cp5.getController("feedA").getMin(), cp5.getController("feedA").getMax()));
+    cp5.getController("killB").setValue(map(pot2, 1023, 0, cp5.getController("killB").getMin(), cp5.getController("killB").getMax()));
+    cp5.getController("diffA").setValue(map(pot4, 1023, 0, cp5.getController("diffA").getMin(), cp5.getController("diffA").getMax()));
+    cp5.getController("diffB").setValue(map(pot5, 1023, 0, cp5.getController("diffB").getMin(), cp5.getController("diffB").getMax()));
+    cp5.getController("smoothA").setValue(map(pot6, 1023, 0, cp5.getController("smoothA").getMin(), cp5.getController("smoothA").getMax()));
+    cp5.getController("smoothB").setValue(map(pot7, 1023, 0, cp5.getController("smoothB").getMin(), cp5.getController("smoothB").getMax()));
+    
+    if (bouton1 >= 512) {
+      reacdiff.set("spawn", true);
+      reacdiff.set("mouse", random(1), random(1));
+    }
   }
   
   reacdiff.set("u_feedA", cp5.getController("feedA").getValue());
@@ -262,7 +267,8 @@ void serialEvent (Serial myPort) {
               pot5    = json.getInt("pot5");
               pot6    = json.getInt("pot6");
               pot7    = json.getInt("pot7");
-              bouton1 = json.getInt("bouton1"); 
+              bouton1 = json.getInt("bouton1");
+              /*
               print("pot 1 : " + pot1 + ", ");
               print("pot 2 : " + pot2 + ", ");
               print("pot 3 : " + pot3 + ", ");
@@ -271,6 +277,7 @@ void serialEvent (Serial myPort) {
               print("pot 6 : " + pot6 + ", ");
               print("pot 7 : " + pot7 + ", ");
               println("bouton 1 : " + bouton1);
+              */
             }
           }
         }
