@@ -4,12 +4,15 @@ import controlP5.*;
 ControlP5 cp5;
 Group g;
 
+
 import processing.serial.*;
 
 Serial myPort;  // Create object from Serial class
 int val;        // Data received from the serial port
 int pot1, pot2, pot3, pot4, pot5, pot6, pot7;
 int bouton1;
+int PORT_NUMBER = 32;
+boolean USE_SERIAL = true;
 
 PShader reacdiff;
 PShader postproc;
@@ -24,7 +27,7 @@ void setup() {
   //fullScreen(P3D);
 
   printArray(Serial.list());
-  String portName = Serial.list()[4];
+  String portName = Serial.list()[PORT_NUMBER];
   myPort = new Serial(this, portName, 57600);
   myPort.bufferUntil('\n'); 
 
@@ -172,6 +175,16 @@ void draw() {
     reacdiff.set("spawn", false);
   }
 
+  if (USE_SERIAL) {
+    cp5.getController("feedA").setValue(floor(map(pot1, 0, 1023, cp5.getController("feedA").getMin(), cp5.getController("feedA").getMax())));
+    cp5.getController("feedA").setValue(map(pot2, 0, 1023, cp5.getController("feedA").getMin(), cp5.getController("feedA").getMax()));
+    cp5.getController("killB").setValue(map(pot3, 0, 1023, cp5.getController("killB").getMin(), cp5.getController("killB").getMax()));
+    cp5.getController("diffA").setValue(map(pot4, 0, 1023, cp5.getController("diffA").getMin(), cp5.getController("diffA").getMax()));
+    cp5.getController("diffB").setValue(map(pot5, 0, 1023, cp5.getController("diffB").getMin(), cp5.getController("diffB").getMax()));
+    cp5.getController("smoothA").setValue(map(pot6, 0, 1023, cp5.getController("smoothA").getMin(), cp5.getController("smoothA").getMax()));
+    cp5.getController("smoothB").setValue(map(pot7, 0, 1023, cp5.getController("smoothB").getMin(), cp5.getController("smoothB").getMax()));
+  }
+  
   reacdiff.set("u_feedA", cp5.getController("feedA").getValue());
   reacdiff.set("u_killB", cp5.getController("killB").getValue());
   reacdiff.set("u_diffA", cp5.getController("diffA").getValue());
@@ -226,19 +239,18 @@ boolean insideGroup(Group group) {
   return isInside;
 }
 
+
 void serialEvent (Serial myPort) {
-
   while (myPort.available() > 0) {
-
     String inBuffer = myPort.readStringUntil('\n');
     
-    //println(inBuffer);
+    println(inBuffer);
     
     if (inBuffer != null) {
       if (inBuffer.substring(0, 1).equals("{")) {
         
         JSONObject json = parseJSONObject(inBuffer);
-        
+
         if (json == null) {
           println("JSONObject could not be parsed");
         } else {
@@ -265,3 +277,4 @@ void serialEvent (Serial myPort) {
     }
   }
 }
+
