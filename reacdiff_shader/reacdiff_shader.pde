@@ -241,40 +241,45 @@ boolean insideGroup(Group group) {
 
 
 void serialEvent (Serial myPort) {
-  while (myPort.available() > 0) {
-    String inBuffer = myPort.readStringUntil('\n');
-    
-    println(inBuffer);
-    
-    if (inBuffer != null) {
-      if (inBuffer.substring(0, 1).equals("{")) {
-        
-        JSONObject json = parseJSONObject(inBuffer);
+  try {
+    while (myPort.available() > 0) {
+      String inBuffer = myPort.readStringUntil('\n');
+      //println(inBuffer);
+      if (inBuffer != null) {
+        try {
+          if (inBuffer.substring(0, 1).equals("{")) {
 
-        if (json == null) {
-          println("JSONObject could not be parsed");
-        } else {
-          //println("json ok");
-          pot1    = json.getInt("pot1");
-          pot2    = json.getInt("pot2");
-          pot3    = json.getInt("pot3");
-          pot4    = json.getInt("pot4");
-          pot5    = json.getInt("pot5");
-          pot6    = json.getInt("pot6");
-          pot7    = json.getInt("pot7");
-          bouton1 = json.getInt("bouton1"); 
-          print("pot 1 : " + pot1 + ", ");
-          print("pot 2 : " + pot2 + ", ");
-          print("pot 3 : " + pot3 + ", ");
-          print("pot 4 : " + pot4 + ", ");
-          print("pot 5 : " + pot5 + ", ");
-          print("pot 6 : " + pot6 + ", ");
-          print("pot 7 : " + pot7 + ", ");
-          println("bouton 1 : " + bouton1);
+            JSONObject json = parseJSONObject(inBuffer);
+
+            if (json == null) {
+              println("JSONObject could not be parsed");
+            } else {
+              //println("json ok");
+              pot1    = json.getInt("pot1");
+              pot2    = json.getInt("pot2");
+              pot3    = json.getInt("pot3");
+              pot4    = json.getInt("pot4");
+              pot5    = json.getInt("pot5");
+              pot6    = json.getInt("pot6");
+              pot7    = json.getInt("pot7");
+              bouton1 = json.getInt("bouton1"); 
+              print("pot 1 : " + pot1 + ", ");
+              print("pot 2 : " + pot2 + ", ");
+              print("pot 3 : " + pot3 + ", ");
+              print("pot 4 : " + pot4 + ", ");
+              print("pot 5 : " + pot5 + ", ");
+              print("pot 6 : " + pot6 + ", ");
+              print("pot 7 : " + pot7 + ", ");
+              println("bouton 1 : " + bouton1);
+            }
+          }
+        }
+        catch (Exception e) {
         }
       } else {
-      }     
+      }
     }
+  } 
+  catch (Exception e) {
   }
 }
-
