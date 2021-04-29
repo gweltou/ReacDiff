@@ -7,12 +7,12 @@ Group g;
 
 import processing.serial.*;
 
-Serial myPort;  // Create object from Serial class
+boolean USE_SERIAL = false;  // Set to true if using a hardware controller
+Serial myPort;
 int val;        // Data received from the serial port
 int pot1, pot2, pot3, pot4, pot5, pot6, pot7;
 int bouton1;
-int PORT_NUMBER = 32;
-boolean USE_SERIAL = true;
+int PORT_NUMBER = 32;  // Change ths number according to the array shown in terminal
 
 PShader reacdiff;
 PShader postproc;
@@ -26,20 +26,22 @@ void setup() {
   //size(800, 600, P3D);
   fullScreen(P3D);
 
-  printArray(Serial.list());
-  String portName = Serial.list()[PORT_NUMBER];
-  myPort = new Serial(this, portName, 57600);
-  myPort.bufferUntil('\n'); 
+  if (USE_SERIAL) {
+    printArray(Serial.list());
+    String portName = Serial.list()[PORT_NUMBER];
+    myPort = new Serial(this, portName, 57600);
+    myPort.bufferUntil('\n');
+  }
 
   pg = createGraphics(width, height, P3D);
   pg.beginDraw();
   pg.background(0);
   pg.endDraw();
 
-  postproc = loadShader("postproc.glsl");
+  postproc = loadShader("shaders/postproc.glsl");
   postproc.set("u_resolution", float(pg.width), float(pg.height));
 
-  reacdiff = loadShader("reacdiff.glsl");
+  reacdiff = loadShader("shaders/reacdiff.glsl");
   reacdiff.set("u_resolution", float(pg.width), float(pg.height));
   reacdiff.set("scene", pg);
 
@@ -183,13 +185,13 @@ void draw() {
     cp5.getController("diffB").setValue(map(pot5, 1023, 0, cp5.getController("diffB").getMin(), cp5.getController("diffB").getMax()));
     cp5.getController("smoothA").setValue(map(pot6, 1023, 0, cp5.getController("smoothA").getMin(), cp5.getController("smoothA").getMax()));
     cp5.getController("smoothB").setValue(map(pot7, 1023, 0, cp5.getController("smoothB").getMin(), cp5.getController("smoothB").getMax()));
-    
+
     if (bouton1 >= 512) {
       reacdiff.set("spawn", true);
       reacdiff.set("mouse", random(1), random(1));
     }
   }
-  
+
   reacdiff.set("u_feedA", cp5.getController("feedA").getValue());
   reacdiff.set("u_killB", cp5.getController("killB").getValue());
   reacdiff.set("u_diffA", cp5.getController("diffA").getValue());
@@ -217,7 +219,7 @@ void keyPressed() {
     pg.clear();
     pg.endDraw();
   } else if (key == 's') {
-    String filename = "reacdiff_";
+    String filename = "frames/reacdiff###_";
     filename += String.valueOf(cp5.getController("feedA").getValue()) + '_';
     filename += String.valueOf(cp5.getController("killB").getValue()) + '_';
     filename += String.valueOf(cp5.getController("diffA").getValue()) + '_';
@@ -270,14 +272,14 @@ void serialEvent (Serial myPort) {
               bouton1 = json.getInt("bouton1");
               /*
               print("pot 1 : " + pot1 + ", ");
-              print("pot 2 : " + pot2 + ", ");
-              print("pot 3 : " + pot3 + ", ");
-              print("pot 4 : " + pot4 + ", ");
-              print("pot 5 : " + pot5 + ", ");
-              print("pot 6 : " + pot6 + ", ");
-              print("pot 7 : " + pot7 + ", ");
-              println("bouton 1 : " + bouton1);
-              */
+               print("pot 2 : " + pot2 + ", ");
+               print("pot 3 : " + pot3 + ", ");
+               print("pot 4 : " + pot4 + ", ");
+               print("pot 5 : " + pot5 + ", ");
+               print("pot 6 : " + pot6 + ", ");
+               print("pot 7 : " + pot7 + ", ");
+               println("bouton 1 : " + bouton1);
+               */
             }
           }
         }
@@ -286,7 +288,7 @@ void serialEvent (Serial myPort) {
       } else {
       }
     }
-  } 
+  }
   catch (Exception e) {
   }
 }
