@@ -8,11 +8,11 @@ Group g;
 import processing.serial.*;
 
 boolean USE_SERIAL = false;  // Set to true if using a hardware controller
+int PORT_NUMBER = 32;  // Change ths number according to the array shown in terminal
 Serial myPort;
 int val;        // Data received from the serial port
 int pot1, pot2, pot3, pot4, pot5, pot6, pot7;
 int bouton1;
-int PORT_NUMBER = 32;  // Change ths number according to the array shown in terminal
 
 PShader reacdiff;
 PShader postproc;
