@@ -22,9 +22,11 @@ int ITERATIONS = 10;
 int counter = 0;
 
 
+
 void setup() {
   //size(800, 600, P3D);
-  fullScreen(P3D);
+  fullScreen(P3D, 1);
+  surface.setResizable(true);
 
   if (USE_SERIAL) {
     printArray(Serial.list());
@@ -159,11 +161,11 @@ void draw() {
   // Framerate optimisation
   if (++counter % 30 == 0) {
     surface.setTitle("Framerate " + String.valueOf(frameRate));
-    //println(frameRate, ITERATIONS);
+    println(frameRate, ITERATIONS);
     counter = 0;
 
     if (frameRate < 50)
-      ITERATIONS--;
+      ITERATIONS = max(1, ITERATIONS-1);
     else if (frameRate > 58)
       ITERATIONS++;
   }
@@ -199,6 +201,7 @@ void draw() {
   reacdiff.set("u_mode", floor(cp5.getController("mode").getValue()));
   reacdiff.set("u_npoint", floor(cp5.getController("points").getValue()));
   reacdiff.set("u_size", cp5.getController("size").getValue());
+  reacdiff.set("u_resolution", float(pg.width), float(pg.height));
 
   for (int i=0; i<ITERATIONS; i++)
     updateShader();
@@ -206,6 +209,7 @@ void draw() {
   shader(postproc);
   postproc.set("scene", pg);
   postproc.set("u_smooth", cp5.getController("smoothA").getValue(), cp5.getController("smoothB").getValue());
+  postproc.set("u_resolution", float(pg.width), float(pg.height));
   noStroke();
   rect(0, 0, width, height);
 
