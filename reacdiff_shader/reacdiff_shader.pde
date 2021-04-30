@@ -84,7 +84,7 @@ void setup() {
   cp5.addSlider("size")
     .setPosition(0, h)
     .setSize(sliderWidth, sliderHeight)
-    .setRange(0.001f, 0.1f)
+    .setRange(0.006f, 0.1f)
     .setValue(0.02f)
     .setGroup(g)
     ;
